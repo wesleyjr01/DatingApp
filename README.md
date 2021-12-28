@@ -48,4 +48,57 @@
     * Now we apply migrations: `$ dotnet ef migrations add InitialCreate -o Data/Migrations`
     * Now that we have done migration, we will go ahead and update our database: `dotnet ef database update`.
     * We want to look at our db now, we will install the `SQLite` plugin, click `CTRL + SHIFT + P` and then `SQLITE -> Open DB`. The use the SQLITE Explorer at the left bar of VSCode.   
-### Adding our own API Controller
+
+---
+
+## Section3 - Building a walking skeleton Part Two - Angular
+* Update Node to version `v16.13.x`.
+* Install the Angular 12 globally: `$ npm install -g @angular/cli@12`
+* Type `$ ng --version` to check the Angular version we have.
+* Lets create an Angular Project: `$ ng new client --strict false`
+  * `y` for Angular routing
+  * `CSS` for stylesheet
+* Install the `Angular Language Service` plugin. Then, on VSCode settings set `"angular.enable-strict-mode-prompt"` to `False`.
+* Go to the cliente and start the client: `$ cd client`, `$ ng serve`.
+* We are now editing the main component at `client/src/app/app.components.ts`. By doing that, we can open `client/src/app/app.components.html` and use the data defined on `app.components.ts` with interpolation:   
+```javascript
+// app.components.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'The Dating App!';
+}
+```   
+
+```html
+<!-- app.components.html -->
+<h1>{{title}}</h1>
+```
+* Three addons to install for Angular on Vscode:
+  * **Angular Language Service**
+  * **Angular Snippets**
+  * **Bracket Pair Colorizer 2**
+### Make http requesto to Angular component
+* We need to add `HttpClientModule` to `app.module.ts` on `imports` section.
+* Now we will use our `app.component.ts` to fetch the data and then display on the page:
+  * On `app.components.ts` add `constructor(private http: HttpClient) { }` to `export class AppComponent{}`
+### Adding CORS support in the API
+* Go to `API/Startup.cs` and add CORS to the `ConfigureServices` and then at `Configure`.
+### Displaying the fetched users in the browser
+* At `app.components.html` edit this:
+```html
+<h1>{{title}}</h1>
+
+<ul>
+    <li *ngFor="let user of users">{{user.id}} - {{user.userName}}</li>
+</ul>
+```   
+### Adding Bootstrap and Font-Awsome
+* Angular Bootstrap: `valor-software.com/ngx-bootstrap`, we will be installing **Bootstrap 4** for sake of compatibility with code in the project. 
+* On `client/` run: `$ ng add ngx-bootstrap`.
+* We will need some icons aswell: `$ npm install font-awesome`
