@@ -102,3 +102,37 @@ export class AppComponent {
 * Angular Bootstrap: `valor-software.com/ngx-bootstrap`, we will be installing **Bootstrap 4** for sake of compatibility with code in the project. 
 * On `client/` run: `$ ng add ngx-bootstrap`.
 * We will need some icons aswell: `$ npm install font-awesome`
+
+---
+
+## Section4 - Authentication basics
+* open `API/Entities/AppUser.cs` and add two new properties:
+  * `public byte[] PasswordHash { get; set; }`
+  * `public byte[] PasswordSalt { get; set; }`
+* Apply migrations of those new fields:
+  * `$ dotnet ef migrations add UserPasswordAdded`
+  * `$ dotnet ef database update`
+* **JSON Web Tokens (JWT)**:
+  * Industry Standard for tokens (RFC 7519)
+  * Self-contained and can contain:
+    * Credentials
+    * Claims
+    * Other info
+  * No session to manage - JWTs are self contained tokens
+  * No Cookies required - mobile friendly
+  * Performance - Once a token is issued, there is no need to make database request to verify a users authentication
+* We will need to go to NugetGalery and install something for JWT. `System.IdentityModel.Tokens.Jwt`, and also `Microsoft.AspNetCore.Authentication.JwtBearer`
+* Then we will need to add a service for authentication on `Startup.cs`: 
+```C#
+  services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+  {
+      options.TokenValidationParameters = new TokenValidationParameters
+      {
+          ValidateIssuerSigningKey = true,
+          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"])),
+          ValidateIssuer = false,
+          ValidateAudience = false,
+      };
+  });
+```
+* On `Configure` class of `Startup.cs` add `app.UseAuthentication();` just below `app.UseCors`.
